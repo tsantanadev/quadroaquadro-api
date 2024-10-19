@@ -38,6 +38,11 @@ func (app *application) mountRoutes() http.Handler {
 
 	r.Route("/v1", func(r chi.Router) {
 		r.Get("/health", app.healthHandler)
+
+		r.Route("/movies", func(r chi.Router) {
+			r.Get("/", app.listMoviesHandler)
+			r.Post("/", app.createMovieHandler)
+		})
 	})
 
 	return r

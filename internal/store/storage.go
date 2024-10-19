@@ -8,6 +8,7 @@ import (
 type Storage struct {
 	Movies interface {
 		Create(context.Context, *Movie) error
+		List(context.Context) ([]Movie, error)
 	}
 	Users interface {
 		Create(context.Context, *User) error
