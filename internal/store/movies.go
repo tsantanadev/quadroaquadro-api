@@ -62,7 +62,7 @@ func (s *MovieStore) List(ctx context.Context) ([]Movie, error) {
 		if err := rows.Scan(
 			&movie.ID,
 			&movie.Title,
-			&movie.Origin,
+			pq.Array(&movie.Origin),
 			pq.Array(&movie.Tags),
 			&movie.ReleaseDate,
 			&movie.OriginalTitle,
