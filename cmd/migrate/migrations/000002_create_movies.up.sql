@@ -1,9 +1,10 @@
 CREATE TABLE IF NOT EXISTS movies (
-    id BIGSERIAL PRIMARY KEY,
+    id INTEGER PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
-    origin VARCHAR(255) NOT NULL,
-    category VARCHAR(255) NOT NULL,
+    origin VARCHAR(255)[] NOT NULL,
+    tags VARCHAR(255)[],
     release_date DATE NOT NULL,
-    status VARCHAR(255) NOT NULL,
-    tags VARCHAR(255)[]
+    original_title VARCHAR(255) NOT NULL,
+    poster_path VARCHAR(255) NOT NULL,
+    genres VARCHAR(255)[]
 )

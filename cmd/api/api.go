@@ -7,17 +7,24 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/tsantanadev/social-api/internal/rest"
 	"github.com/tsantanadev/social-api/internal/store"
 )
 
 type application struct {
-	config config
-	store  store.Storage
+	config     config
+	store      store.Storage
+	tmdbClient rest.TMDBClient
 }
 
 type config struct {
-	addr string
-	db   dbConfig
+	addr       string
+	db         dbConfig
+	TMDBConfig TMDBConfig
+}
+
+type TMDBConfig struct {
+	apiKey string
 }
 
 type dbConfig struct {

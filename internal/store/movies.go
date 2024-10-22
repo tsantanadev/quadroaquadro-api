@@ -11,40 +11,42 @@ import (
 type Movie struct {
 	ID            int       `json:"id"`
 	Title         string    `json:"title"`
-	Origin        string    `json:"origin"`
-	Category      string    `json:"category"`
+	Origin        []string  `json:"origin"`
 	Tags          []string  `json:"tags"`
 	ReleaseDate   time.Time `json:"release_date"`
-	Status        string    `json:"status"`
 	OriginalTitle string    `json:"original_title"`
+	PosterPath    string    `json:"poster_path"`
+	Genres        []string  `json:"genres"`
 }
 
 type MovieStore struct {
 	db *sql.DB
 }
 
-func (s *MovieStore) Create(ctx context.Context, movie *Movie) error {
+func (s *MovieStore) Create(ctx context.Context, movie Movie) error {
 	query := `
-		INSERT INTO movies (title, origin, category, release_date, status, tags, original_title)
-		VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id
+		INSERT INTO movies (id, title, origin, release_date, tags, original_title, poster_path, genres)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 	`
 
-	return s.db.QueryRowContext(
+	_, err := s.db.ExecContext(
 		ctx,
 		query,
+		movie.ID,
 		movie.Title,
-		movie.Origin,
-		movie.Category,
+		pq.Array(movie.Origin),
 		movie.ReleaseDate,
-		movie.Status,
 		pq.Array(movie.Tags),
 		movie.OriginalTitle,
-	).Scan(&movie.ID)
+		movie.PosterPath,
+		pq.Array(movie.Genres),
+	)
+	return err
 }
 
 func (s *MovieStore) List(ctx context.Context) ([]Movie, error) {
 	query := `
-		SELECT id, title, origin, category, release_date, status, tags, original_title
+		SELECT id, title, origin, tags, release_date, original_title, poster_path, genres 
 		FROM movies
 	`
 
@@ -61,11 +63,11 @@ func (s *MovieStore) List(ctx context.Context) ([]Movie, error) {
 			&movie.ID,
 			&movie.Title,
 			&movie.Origin,
-			&movie.Category,
-			&movie.ReleaseDate,
-			&movie.Status,
 			pq.Array(&movie.Tags),
+			&movie.ReleaseDate,
 			&movie.OriginalTitle,
+			&movie.PosterPath,
+			pq.Array(&movie.Genres),
 		); err != nil {
 			return nil, err
 		}
