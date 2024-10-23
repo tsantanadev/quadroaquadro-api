@@ -7,8 +7,8 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/tsantanadev/social-api/internal/rest"
-	"github.com/tsantanadev/social-api/internal/store"
+	"github.com/tsantanadev/quadroaquadro/internal/rest"
+	"github.com/tsantanadev/quadroaquadro/internal/store"
 )
 
 type application struct {
@@ -48,6 +48,7 @@ func (app *application) mountRoutes() http.Handler {
 
 		r.Route("/movies", func(r chi.Router) {
 			r.Get("/", app.listMoviesHandler)
+			r.Get("/{id}", app.getMovieHandler)
 			r.Post("/", app.createMovieHandler)
 		})
 	})

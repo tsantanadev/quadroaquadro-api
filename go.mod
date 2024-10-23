@@ -1,4 +1,4 @@
-module github.com/tsantanadev/social-api
+module github.com/tsantanadev/quadroaquadro
 
 go 1.23.2
 

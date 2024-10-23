@@ -3,10 +3,10 @@ package main
 import (
 	"log"
 
-	"github.com/tsantanadev/social-api/internal/db"
-	"github.com/tsantanadev/social-api/internal/env"
-	"github.com/tsantanadev/social-api/internal/rest"
-	"github.com/tsantanadev/social-api/internal/store"
+	"github.com/tsantanadev/quadroaquadro/internal/db"
+	"github.com/tsantanadev/quadroaquadro/internal/env"
+	"github.com/tsantanadev/quadroaquadro/internal/rest"
+	"github.com/tsantanadev/quadroaquadro/internal/store"
 )
 
 func main() {
