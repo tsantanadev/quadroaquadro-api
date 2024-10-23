@@ -9,6 +9,8 @@ type Storage struct {
 	Movies interface {
 		Create(context.Context, Movie) error
 		List(context.Context) ([]Movie, error)
+		Exists(context.Context, int) (bool, error)
+		Get(context.Context, int) (*Movie, error)
 	}
 	Users interface {
 		Create(context.Context, *User) error

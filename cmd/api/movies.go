@@ -21,6 +21,17 @@ func (app *application) createMovieHandler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
+	movieExists, err := app.store.Movies.Exists(r.Context(), request.Id)
+	if err != nil {
+		writeJSONError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if movieExists {
+		writeJSONError(w, http.StatusConflict, "movie already exists")
+		return
+	}
+
 	tmdbResponse, err := app.tmdbClient.GetMovie(request.Id)
 	movie := store.Movie{
 		ID:            request.Id,
