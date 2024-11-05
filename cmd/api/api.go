@@ -7,14 +7,16 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	filestorage "github.com/tsantanadev/quadroaquadro/internal/file_storage"
 	"github.com/tsantanadev/quadroaquadro/internal/rest"
 	"github.com/tsantanadev/quadroaquadro/internal/store"
 )
 
 type application struct {
-	config     config
-	store      store.Storage
-	tmdbClient rest.TMDBClient
+	config      config
+	store       store.Storage
+	tmdbClient  rest.TMDBClient
+	fileStorage filestorage.FileStorage
 }
 
 type config struct {
@@ -50,6 +52,7 @@ func (app *application) mountRoutes() http.Handler {
 			r.Get("/", app.listMoviesHandler)
 			r.Get("/{id}", app.getMovieHandler)
 			r.Post("/", app.createMovieHandler)
+			r.Post("/{id}/images", app.imagePostHandler)
 		})
 	})
 

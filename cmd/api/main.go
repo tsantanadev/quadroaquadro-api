@@ -5,6 +5,7 @@ import (
 
 	"github.com/tsantanadev/quadroaquadro/internal/db"
 	"github.com/tsantanadev/quadroaquadro/internal/env"
+	filestorage "github.com/tsantanadev/quadroaquadro/internal/file_storage"
 	"github.com/tsantanadev/quadroaquadro/internal/rest"
 	"github.com/tsantanadev/quadroaquadro/internal/store"
 )
@@ -33,10 +34,17 @@ func main() {
 
 	store := store.NewStorage(db)
 
+	fileStorage := &filestorage.FileStorageGCP{
+		Config: &filestorage.FileStorageConfig{
+			Bucket: env.GetString("BUCKET", ""),
+		},
+	}
+
 	app := &application{
-		config:     cfg,
-		store:      store,
-		tmdbClient: *rest.NewTMDBClient(cfg.TMDBConfig.apiKey),
+		config:      cfg,
+		store:       store,
+		tmdbClient:  *rest.NewTMDBClient(cfg.TMDBConfig.apiKey),
+		fileStorage: fileStorage,
 	}
 
 	mux := app.mountRoutes()
