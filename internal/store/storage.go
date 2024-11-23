@@ -17,6 +17,7 @@ type Storage struct {
 	}
 	Images interface {
 		Create(*Image) error
+		GetImagesByMovieId(int) []Image
 	}
 }
 

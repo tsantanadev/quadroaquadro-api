@@ -39,21 +39,24 @@ func (app *application) imagePostHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	for key, fileHeader := range files {
-		imageId, err := uploadImage(fileHeader, app.fileStorage, r.Context())
-		if err != nil {
-			writeJSONError(w, http.StatusInternalServerError, err.Error())
-			return
-		}
+	for key, fileHeaders := range files {
+		for _, fileHeader := range fileHeaders {
 
-		image := store.Image{
-			ID:      imageId,
-			MovieId: id,
-			Level:   key,
-		}
-		if err := app.store.Images.Create(&image); err != nil {
-			writeJSONError(w, http.StatusInternalServerError, err.Error())
-			return
+			imageId, err := uploadImage(fileHeader, app.fileStorage, r.Context())
+			if err != nil {
+				writeJSONError(w, http.StatusInternalServerError, err.Error())
+				return
+			}
+
+			image := store.Image{
+				ID:      imageId,
+				MovieId: id,
+				Level:   key,
+			}
+			if err := app.store.Images.Create(&image); err != nil {
+				writeJSONError(w, http.StatusInternalServerError, err.Error())
+				return
+			}
 		}
 
 	}
@@ -82,21 +85,17 @@ func parseMultipartForm(w http.ResponseWriter, r *http.Request) error {
 	return r.ParseMultipartForm(MAX_BODY_SIZE)
 }
 
-func getFilesFromRequest(r *http.Request) (map[int]*multipart.FileHeader, error) {
-	files := make(map[int]*multipart.FileHeader)
-	for key, file := range r.MultipartForm.File {
+func getFilesFromRequest(r *http.Request) (map[int][]*multipart.FileHeader, error) {
+	files := make(map[int][]*multipart.FileHeader)
+	for key, _ := range r.MultipartForm.File {
 		// return error if key is not a number
 		level, err := strconv.Atoi(key)
-
 		if err != nil {
 			return nil, fmt.Errorf("invalid level, only numbers are allowed")
 		}
 
-		if len(file) == 1 {
-			files[level] = file[0]
-		} else {
-			return nil, fmt.Errorf("only one image per level")
-		}
+		files[level] = r.MultipartForm.File[key]
+
 	}
 	if len(files) == 0 {
 		return nil, fmt.Errorf("image is required")

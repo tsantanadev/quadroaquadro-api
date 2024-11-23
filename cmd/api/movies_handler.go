@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -45,12 +46,40 @@ func (app *application) createMovieHandler(w http.ResponseWriter, r *http.Reques
 
 func (app *application) listMoviesHandler(w http.ResponseWriter, r *http.Request) {
 	movies, err := app.store.Movies.List(r.Context())
+
+	responses := make([]vo.MovieResponse, 0)
+	for _, movie := range movies {
+		images := app.store.Images.GetImagesByMovieId(movie.ID)
+		imagesResponse := make([]vo.Image, 0)
+		for _, image := range images {
+			url := fmt.Sprintf("https://storage.googleapis.com/%s/%s", app.config.Bucket, image.ID)
+			imageResponse := vo.Image{
+				Level: image.Level,
+				URL:   url,
+			}
+			imagesResponse = append(imagesResponse, imageResponse)
+		}
+
+		movieResponse := vo.MovieResponse{
+			ID:            movie.ID,
+			Title:         movie.Title,
+			Origin:        movie.Origin,
+			Tags:          movie.Tags,
+			ReleaseDate:   movie.ReleaseDate,
+			OriginalTitle: movie.OriginalTitle,
+			PosterPath:    movie.PosterPath,
+			Genres:        movie.Genres,
+			Images:        imagesResponse,
+		}
+
+		responses = append(responses, movieResponse)
+	}
 	if err != nil {
 		writeJSONError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	writeJSON(w, http.StatusOK, movies)
+	writeJSON(w, http.StatusOK, responses)
 }
 
 func (app *application) getMovieHandler(w http.ResponseWriter, r *http.Request) {

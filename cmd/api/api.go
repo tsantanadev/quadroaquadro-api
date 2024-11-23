@@ -23,6 +23,7 @@ type config struct {
 	addr       string
 	db         dbConfig
 	TMDBConfig TMDBConfig
+	Bucket     string
 }
 
 type TMDBConfig struct {

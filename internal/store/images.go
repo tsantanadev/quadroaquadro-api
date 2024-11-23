@@ -25,3 +25,33 @@ func (s *ImageStore) Create(image *Image) error {
 		image.Level,
 	).Scan(&image.ID)
 }
+
+func (s *ImageStore) GetImagesByMovieId(movieId int) []Image {
+	query := `
+		SELECT id, movie_id, level
+		FROM images
+		WHERE movie_id = $1
+	`
+
+	rows, err := s.db.Query(query, movieId)
+	if err != nil {
+		return nil
+	}
+	defer rows.Close()
+
+	var images []Image
+	for rows.Next() {
+		var image Image
+		err := rows.Scan(
+			&image.ID,
+			&image.MovieId,
+			&image.Level,
+		)
+		if err != nil {
+			return nil
+		}
+		images = append(images, image)
+	}
+
+	return images
+}
