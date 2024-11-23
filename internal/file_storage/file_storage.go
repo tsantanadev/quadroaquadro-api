@@ -1,7 +1,10 @@
 package filestorage
 
-import "io"
+import (
+	"context"
+	"io"
+)
 
 type FileStorage interface {
-	UploadFile(file io.Reader, fileName string) error
+	UploadFile(ctx context.Context, file io.Reader, fileName string) error
 }

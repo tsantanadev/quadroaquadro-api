@@ -15,11 +15,15 @@ type Storage struct {
 	Users interface {
 		Create(context.Context, *User) error
 	}
+	Images interface {
+		Create(*Image) error
+	}
 }
 
 func NewStorage(db *sql.DB) Storage {
 	return Storage{
 		Movies: &MovieStore{db},
 		Users:  &UserStore{db},
+		Images: &ImageStore{db},
 	}
 }
